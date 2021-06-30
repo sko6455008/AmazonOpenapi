@@ -1,0 +1,242 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Swagger Petstore
+  description: A sample API that uses a petstore as an example to demonstrate features in the OpenAPI 3.0 specification
+  termsOfService: http://swagger.io/terms/
+  contact:
+    name: Swagger API Team
+    email: apiteam@swagger.io
+    url: http://swagger.io
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://petstore.swagger.io/api
+paths:
+  /amazon:
+    post:
+      description: add data
+      operationId: addAmazon
+      requestBody:
+        description: Amazon to add to the store
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Amazon'
+      responses:
+        '200':
+          description: amazon response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amazon'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /amazon/{asin}:
+    get:
+      description: get data
+      operationId: getAmazon
+      parameters:
+        - name: asin
+          in: path
+          description: amazonデータの取得
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: amazon response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amazon'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      description: put data
+      operationId: putAmazon
+      parameters:
+        - name: asin
+          in: path
+          description: amazonデータの取得
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 全体更新するamazonデータ
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Amazon"
+      responses:
+        '200':
+          description: amazon response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amazon'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      description: asinを指定して一部置換
+      operationId: patchAmazon
+      parameters:
+        - name: asin
+          in: path
+          description: パッチしたいデータのasin
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: 部分更新するamazonデータ
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AmazonPatch"
+      responses:
+        '200':
+          description: amazon response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amazon'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    delete:
+      description: deletes a single amazon based on the ID supplied
+      operationId: deleteAmazon
+      parameters:
+        - name: asin
+          in: path
+          description: asin of amazon to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: amazon deleted
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /amazon/active/{asin}:
+    patch:
+      description: asinを指定して復元
+      operationId: activeAmazon
+      parameters:
+        - name: asin
+          in: path
+          description: 復元したいデータのasin
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: amazon response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amazon'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /amazon/inactive/{asin}:
+    patch:
+      description: asinを指定して削除
+      operationId: inactiveAmazon
+      parameters:
+        - name: asin
+          in: path
+          description: 削除したいデータのasin
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: amazon response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Amazon'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Amazon:
+      type: object
+      required:
+        - product_name
+        - maker_name
+        - price
+        - reason
+        - url
+        - asin
+      properties:
+        asin:
+          type: string
+        name:
+          type: string
+        maker:
+          type: string
+        price:
+          type: integer
+        reason:
+          type: string
+        url:
+          type: string
+    
+    AmazonPatch:
+      type: object
+      properties:
+        name:
+          type: string
+        maker:
+          type: string
+        price:
+          type: integer
+          format: int64
+        reason:
+          type: string
+        url:
+          type: string
+    
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
